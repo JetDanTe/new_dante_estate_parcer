@@ -1,8 +1,9 @@
 import os
 from bs4 import BeautifulSoup
 import re
-
+from pprint import pprint
 import requests
+
 
 class OlxApi():
     def __init__(self, filter, last_adv):
@@ -15,7 +16,6 @@ class OlxApi():
         return f"https://www.olx.ua/nedvizhimost/kvartiry/dolgosrochnaya-arenda-kvartir/{self.filter.get('city', 'odessa')}" \
                f"/?search%5Bfilter_float_price%3Afrom%5D={self.filter.get('min_pr', 2000)}&search%5Bfilter_float_" \
                f"price%3Ato%5D={self.filter.get('max_pr', 100000)}"
-
 
     def get_adv(self):
         res = requests.get(self.url)
@@ -31,12 +31,12 @@ class OlxApi():
             list_adv.append(adv_data)
         return list_adv
 
-
     def detail(self, link):
-        ret = {'id': 0, 'price': '-', 'title': '-', 'description': '-'}
+        ret = {'id': 0, 'price': '-', 'title': '-', 'description': '-', 'link': '-'}
         regex = r"ID: (\d{2,})"
         description = requests.get(link)
         desc_soup = BeautifulSoup(description.content, 'html.parser')
+        ret['link'] = link
         ret['title'] = desc_soup.h1.text
         ret['price'] = desc_soup.h3.text
         for elem in desc_soup.findAll('div'):
@@ -46,3 +46,7 @@ class OlxApi():
         ret['id'] = re.findall(regex, desc_soup.body.text)
         return ret
 
+
+if __name__ == '__main__':
+    dante = OlxApi({'city': 'Odessa', 'min_pr': 2000, 'max_pr': 5000}, 29123423)
+    pprint(dante.get_adv()[6:])

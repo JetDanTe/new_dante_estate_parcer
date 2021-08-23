@@ -23,6 +23,5 @@ class HelloState(BaseState):
                 if message.data == f'nextstate:{city}State':
                     user_filter = {self.chat_id: {}}
                     user_filter[self.chat_id] = {"city": city}
-                    print(user_filter)
                     return CityState(user_filter, self.chat_id)
         return self

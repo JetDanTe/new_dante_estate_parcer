@@ -19,3 +19,9 @@ class PriceStateButtons:
 # search state buttons
 class SearchButton:
     search = types.InlineKeyboardButton(text='Начать поиск!', callback_data='nextstate:searchState')
+
+# change filter
+class ChangeFilterButton:
+    change_filter = types.InlineKeyboardButton(text='Изменить фильтр', callback_data='nextstate:changefilterState')
+
+
