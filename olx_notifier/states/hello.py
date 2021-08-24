@@ -4,7 +4,6 @@ from olx_notifier.states.base import BaseState
 from olx_notifier.states.city_state import CityState
 from olx_notifier.tg_buttons import CityStateButtons
 
-user_filter = {}
 
 class HelloState(BaseState):
     text = "Привет! Давай искать квартиры! Выбери город поиска, пожалуйста!"
@@ -21,7 +20,8 @@ class HelloState(BaseState):
         if hasattr(message, 'data'):
             for city in self.list_of_cities:
                 if message.data == f'nextstate:{city}State':
-                    user_filter = {self.chat_id: {}}
-                    user_filter[self.chat_id] = {"city": city}
-                    return CityState(user_filter, self.chat_id)
+                    self.user.settings["city"] = city
+                    self.user.last_viewed = ""
+                    self.user.save()
+                    return CityState(self.chat_id)
         return self

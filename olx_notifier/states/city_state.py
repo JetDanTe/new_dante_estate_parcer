@@ -10,9 +10,8 @@ from pprint import pprint
 class CityState(BaseState):
     text = "Выбери бюджет, пожалуйста."
 
-    def __init__(self, user_filter,  chat_id=None):
+    def __init__(self, chat_id=None):
         super().__init__(chat_id)
-        self.user_filter = user_filter
         self.keyboard.add(PriceStateButtons.f2t5State)
         self.keyboard.add(PriceStateButtons.f5t7State)
         self.keyboard.add(PriceStateButtons.f7t10State)
@@ -23,7 +22,9 @@ class CityState(BaseState):
             for price in self.list_of_prices:
                 if message.data == f'nextstate:{price}State':
                     a, b = price_chooser(price)
-                    self.user_filter[self.chat_id]['min_pr'] = a
-                    self.user_filter[self.chat_id]['max_pr'] = b
-                    return SearchState(self.user_filter, self.chat_id)
+                    user = self.get_user()
+                    user.settings['min_pr'] = a
+                    user.settings['max_pr'] = b
+                    user.save()
+                    return SearchState(self.chat_id)
         return self
